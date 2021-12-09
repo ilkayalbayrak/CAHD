@@ -1,0 +1,62 @@
+- Add band matrix computation a zero padding method to create bigger square matrices
+- Start working on how to create anonymized groups
+- Check if random permutation before cutting a square piece from the main dataset actually helps us to get a
+better RCM result
+
+
+###--- Details ---###
+CAHD scans transaction set T in row order, finds the first
+sensitive transaction in the sequence, and attempts to form an
+anonymizing group for it.
+
+We say that two transactions are conflicting if they have
+at least one common sensitive item.
+
+Assume that we
+want to anonymize t0 with privacy degree p. In that case, we
+need to group it with at least p -1 different transactions. We
+choose to adopt a "one-occurrence-per-group" heuristic that
+allows only one occurrence of each sensitive item in a group.
+
+###--- How CAHD works ---###
+privacy degree = p
+sensitive transaction t1 => conflicting with t0
+Sensitive transaction t0
+Form a candidate list CL with the alpha_p transactions that
+precede, respectively follow t0,
+    - These following transactions should not be conflicting with each other or
+    with t0
+    - Conflicting transactions are skipped when building CL
+    - alpha_ is a Natural Number(N) system parameter which restricts
+    the range of the search. Intuitively, the larger alpha_, the better
+    the chance to include in CL transactions with similar items,
+    but at increased execution time.
+
+Note that t1 is excluded
+from CL(to), and its predecessor (which is non-sensitive,
+hence not in conflict with t0) is included. Then, out of the 2alpha_p
+transactions in CL(t0), the p -1 of them that have the largest
+number of QID items in common with t0 are chosen to form an
+anonymized group. The intuition is that, the more transactions
+share the same QID the smaller the reconstruction error is (see
+eq. (2)). All selected transactions are then removed from T,
+and the process continues with the next sensitive transaction
+in the order. Fig. 8 gives the pseudocode of CAHD.
+
+When creating the group formations, we maintain a HISTOGRAM with the number of
+remainng occurrences for each sensitive item
+    - The histogram is initialized when the data is read,
+    - and updated everytime a new group is formed
+
+Upon validating a group, we check (line
+8) that the remaining set of transactions satisfies the privacy
+requirement. If not, the current group is not validated, and
+a new group formation is attempted starting from the next
+sensitive transaction in the sequence.
+
+The algorithm stops when there are no more ungrouped
+sensitive transactions remaining, or when no new groups can
+be formed. If there remain un-grouped transactions, these are
+published as a single group. It is guaranteed, due to our group
+validation check, that this group satisfies the degree of privacy
+p.
