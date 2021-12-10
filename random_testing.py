@@ -104,4 +104,4 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=True):
 
 if __name__ == '__main__':
     df = pd.read_csv('./Dataset/BMS1_table.csv', index_col=False)
-    df_square, items, sensitive_items = compute_band_matrix_v2(dataset=df, bm_size=400, num_sensitive=5)
+    df_square, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=400, num_sensitive=5)
