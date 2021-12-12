@@ -3,11 +3,8 @@ import numpy as np
 from scipy.sparse.csgraph import reverse_cuthill_mckee
 from scipy.sparse import csr_matrix
 import matplotlib.pylab as plt
-import scipy.sparse as sps
-import operator
 
 
-# print(df[:2])
 def logger(label, obj):
     print(f'\n\n{"-" * 20}\n{label}:\n{obj}\n{"-" * 20}\n\n')
 
@@ -32,7 +29,7 @@ def plot_band_matrix(square_matrix, square_band_matrix, bandwidth_1, bandwidth_2
     print("Bandwidth after RCM", bandwidth_2)
 
 
-def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=True):
+def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False):
     # input : unsymmetric matrix A
     # compute symmetric matrix B = AxA.T
     # sigma = RCM(sigma)
