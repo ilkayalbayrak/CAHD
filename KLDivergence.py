@@ -23,7 +23,6 @@ def compute_act_s_in_c(band_matrix, QID_list, QID_values, sensitive_items):
         logger("band_matrix[band_matrix[sensitive_items] == 1]",type(band_matrix[band_matrix[sensitive_items] == 1].index.tolist()[0]))
 
         row_sensitive = band_matrix[band_matrix[sensitive_items] == 1].index.tolist()
-        # break
         number_s_t = len(row_sensitive)
         set_row = set(row_sensitive)
         # control all values

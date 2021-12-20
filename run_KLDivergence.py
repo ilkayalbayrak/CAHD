@@ -7,21 +7,17 @@ import KLDivergence
 import random
 from band_matrix import compute_band_matrix, logger
 
-
 if __name__ == "__main__":
     bm_size = 1000  # band matrix size
     num_sensitive = 10  # number of sensitive items
     p_degree = 5  # the degree of privacy
     alpha = 3
-    # TODO: after verifying everything works, find KL values for multiple privacy levels for comparison
     p_degree_list = [4, 6, 8, 10]
     KL_values = list()
 
     # load the data
     data_path = './Dataset/BMS1_table.csv'
     df = pd.read_csv(data_path, index_col=False)
-
-
 
     # get the start time to calculate execution time
     start_time = time.time()
@@ -63,7 +59,6 @@ if __name__ == "__main__":
         logger("DEBUG", type(df_square[df_square[sensitive_items] == 1].index.tolist()[0]))
 
         # calculate actsc and estsc  for KL Divergence
-        # TODO: fix the problem that happens while running kl divergence
         KL_Divergence = 0
 
         for value in all_value:
@@ -89,5 +84,3 @@ if __name__ == "__main__":
         file.write(f"{p_degree_list[idx]} {KL_values[idx]}\n")
 
     file.close()
-
-
