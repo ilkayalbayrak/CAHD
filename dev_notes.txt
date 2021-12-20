@@ -60,3 +60,12 @@ be formed. If there remain un-grouped transactions, these are
 published as a single group. It is guaranteed, due to our group
 validation check, that this group satisfies the degree of privacy
 p.
+
+
+
+###--- KL-Divergence ---###
+KL-divergence is a metric for calculating the amount of information loss
+incurred by data anonymization
+
+The process of estimating the result of the query for each anonymized
+group G, is referred as a "data reconstruction".

@@ -1,7 +1,6 @@
 import operator
 import time
 from band_matrix import compute_band_matrix, logger
-import BandMatrix
 
 import numpy as np
 import pandas as pd
@@ -174,11 +173,11 @@ class CAHD:
         return False
 
 
-if __name__ == "__main__":
-    df = pd.read_csv('./Dataset/BMS1_table.csv', index_col=False)
-    df_square, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=487, num_sensitive=10, plot=True)
-    print(df_square.shape)
-
-    cahd = CAHD(band_matrix=df_square, sensitive_items=sensitive_items, p_degree=4, alpha_=4)
-    cahd.create_groups()
-    print(cahd.group_dict)
+# if __name__ == "__main__":
+#     df = pd.read_csv('./Dataset/BMS1_table.csv', index_col=False)
+#     df_square, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=487, num_sensitive=10, plot=True)
+#     print(df_square.shape)
+#
+#     cahd = CAHD(band_matrix=df_square, sensitive_items=sensitive_items, p_degree=4, alpha_=4)
+#     cahd.create_groups()
+#     print(cahd.group_dict)

@@ -77,10 +77,16 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
         logger('RCM', order)
         # plt.spy(order, marker='.', markersize='1')
 
-        items_final_order = [items_reordered[i] for i in order]
-        logger('Items final order', items_final_order)
+
         columns_final_order = [df_square.columns[i] for i in order]
         logger('Columns final order', columns_final_order)
+
+        # items_final_order = [items_reordered[i] for i in order]
+        items_final_order = [items_reordered[i] for i in order]
+
+        logger('Items final order', items_final_order)
+        # items_final_test = dict(zip(columns_final_order, items_final_order))
+        # logger("######################3 TEST ###############3", list(items_final_test))
 
         # Band matrix
         df_square_band = df_square.iloc[order][columns_final_order]
