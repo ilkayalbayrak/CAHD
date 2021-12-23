@@ -8,11 +8,11 @@ import random
 from band_matrix import compute_band_matrix, logger
 
 if __name__ == "__main__":
-    bm_size = 487  # band matrix size
+    bm_size = 1000  # band matrix size
     num_sensitive = 10  # number of sensitive items
-    p_degree = 5  # the degree of privacy
+    # p_degree = 5  # the degree of privacy
     alpha = 3
-    p_degree_list = [4, 6, 8, 10]
+    p_degree_list = [4, 6, 8, 10, 12, 14, 16, 18, 20]
     KL_values = list()
 
     # load the data
@@ -23,11 +23,12 @@ if __name__ == "__main__":
     start_time = time.time()
 
     print("Calculating band matrix")
-    df_square, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=bm_size, num_sensitive=num_sensitive, plot=True)
+    df_square, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=bm_size, num_sensitive=num_sensitive,
+                                                            plot=True)
 
     for privacy_degree in p_degree_list:
         # Apply CAHD algorithm to create
-        cahd = CAHD(band_matrix=df_square, sensitive_items=sensitive_items, p_degree=p_degree, alpha_=alpha)
+        cahd = CAHD(band_matrix=df_square, sensitive_items=sensitive_items, p_degree=privacy_degree, alpha_=alpha)
         print(cahd.group_dict)
         cahd.compute_hist()
         hist_item = cahd.hist
@@ -56,7 +57,8 @@ if __name__ == "__main__":
         # otherwise they dont match and KL divergence calculation fails
         sensitive_item = str(max(hist_item.keys(), key=(lambda k: hist_item[k])))
         logger("Sensitive item, MAX VAL from histogram", sensitive_item)
-        logger("DEBUG", type(df_square[df_square[sensitive_items] == 1].index.tolist()[0]))
+        logger("DEBUG", df_square[df_square[sensitive_items] == 1].index.tolist())
+        # logger("DEBUG 2", type(df_square[0].index[0]))
 
         # calculate actsc and estsc  for KL Divergence
         KL_Divergence = 0

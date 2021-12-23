@@ -6,7 +6,7 @@ import matplotlib.pylab as plt
 
 
 def logger(label, obj):
-    print(f'\n\n{"-" * 20}\n{label}:\n{obj}\n{"-" * 20}\n\n')
+    print(f'\n{"-" * 20}\n{label}:\n{obj}\n{"-" * 20}\n')
 
 
 def plot_band_matrix(square_matrix, square_band_matrix, bandwidth_1, bandwidth_2, save_plot=False):
@@ -82,7 +82,7 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
             random_column = np.random.permutation(dataset.shape[1])
             random_row = np.random.permutation(dataset.shape[0])
 
-            dataset.columns = [i for i in range(len(dataset.columns))]
+            dataset.columns = [str(i) for i in range(len(dataset.columns))]
 
         items_reordered = [items[i] for i in random_column]
         logger('Items reordered', items_reordered[:10])
@@ -143,3 +143,6 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
 if __name__ == '__main__':
     df = pd.read_csv('./Dataset/BMS1_table.csv', index_col=False)
     df_square, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=1000, num_sensitive=5)
+    logger("Band matrix shape", df_square.shape)
+    logger("band matrix columns", df_square.columns)
+

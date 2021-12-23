@@ -20,7 +20,7 @@ def compute_act_s_in_c(band_matrix, QID_list, QID_values, sensitive_items):
     if type(sensitive_items) is str:
         print("computing act s in c")
         logger("type(sensitive_items) TRUE", row_sensitive)
-        logger("band_matrix[band_matrix[sensitive_items] == 1]",type(band_matrix[band_matrix[sensitive_items] == 1].index.tolist()[0]))
+        # logger("band_matrix[band_matrix[sensitive_items] == 1]",type(band_matrix[band_matrix[sensitive_items] == 1].index.tolist()[0]))
 
         row_sensitive = band_matrix[band_matrix[sensitive_items] == 1].index.tolist()
         number_s_t = len(row_sensitive)
