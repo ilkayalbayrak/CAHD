@@ -37,20 +37,52 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
     # return A'
 
     # TODO: Add a zero padding method for the 'matrix slicing' so we can have bigger matrices then len(items)
-    if dataset is not None and len(dataset) >= bm_size and len(dataset.columns) >= bm_size:
+    if dataset is not None and len(dataset) >= bm_size:
         logger('Original df head', dataset.head())
-        items = dataset.columns
-        logger('Items', items[:10])
+        items = None # FIXME: this should probably go in the if else statements, rather than being global
+        # logger('Items', items[:10])
 
         # define a random seed for np.random operations
         np.random.seed(seed=42)
 
-        # random permutation of rows and columns
-        random_column = np.random.permutation(dataset.shape[1])[:bm_size]
-        logger('Random columns', random_column[:10])
+        random_column = None
+        random_row = None
 
-        random_row = np.random.permutation(dataset.shape[0])[:bm_size]
-        logger('Random rows', random_row[:10])
+        # check if we need to add zero filler columns
+        if len(dataset.columns) >= bm_size:
+            items = dataset.columns # FIXME: this may need to be converted to a list explicitly, check if it runs correctly
+            # random permutation of rows and columns
+            random_column = np.random.permutation(dataset.shape[1])[:bm_size]
+            logger('Random columns', random_column[:10])
+
+            random_row = np.random.permutation(dataset.shape[0])[:bm_size]
+            logger('Random rows', random_row[:10])
+
+        else:
+            random_row = np.random.permutation(dataset.shape[0])
+            dataset = dataset.iloc[random_row][:bm_size]
+            dataset = dataset.reset_index()
+            dataset.drop('index', axis=1, inplace=True)
+
+            columns = dataset.columns
+
+            # fill the gap between the features and wanted dimension size with zeros
+            zero_data_to_add = np.zeros(shape=(len(dataset), len(dataset) - len(columns)))
+            columns_to_add = [f"temp_{x}" for x in range(0, len(dataset) - len(columns))]
+
+            df_to_add = pd.DataFrame(zero_data_to_add, columns=columns_to_add, index=dataset.index, dtype='uint8')
+
+            # add all prepared filler zeros to dataset
+            dataset = pd.concat([dataset, df_to_add], axis=1)
+
+            # shuffle rows and cols
+            np.random.seed(seed=42)
+            items = dataset.columns
+
+            random_column = np.random.permutation(dataset.shape[1])
+            random_row = np.random.permutation(dataset.shape[0])
+
+            dataset.columns = [i for i in range(len(dataset.columns))]
 
         items_reordered = [items[i] for i in random_column]
         logger('Items reordered', items_reordered[:10])
@@ -85,6 +117,7 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
         items_final_order = [items_reordered[i] for i in order]
 
         logger('Items final order', items_final_order)
+        logger('Items final order LENGTH', len(items_final_order))
         # items_final_test = dict(zip(columns_final_order, items_final_order))
         # logger("######################3 TEST ###############3", list(items_final_test))
 
@@ -103,8 +136,10 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
             plot_band_matrix(df_square, df_square_band, bw1, bw2)
 
         return df_square_band, items_final_order, sensitive_items
+    # elif dataset is not None and len(dataset) >= bm_size:
+    #     pass
 
 
 if __name__ == '__main__':
     df = pd.read_csv('./Dataset/BMS1_table.csv', index_col=False)
-    df_square, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=400, num_sensitive=5)
+    df_square, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=1000, num_sensitive=5)

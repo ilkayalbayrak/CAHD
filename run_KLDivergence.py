@@ -8,7 +8,7 @@ import random
 from band_matrix import compute_band_matrix, logger
 
 if __name__ == "__main__":
-    bm_size = 1000  # band matrix size
+    bm_size = 487  # band matrix size
     num_sensitive = 10  # number of sensitive items
     p_degree = 5  # the degree of privacy
     alpha = 3
@@ -23,7 +23,7 @@ if __name__ == "__main__":
     start_time = time.time()
 
     print("Calculating band matrix")
-    df_square, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=487, num_sensitive=10, plot=True)
+    df_square, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=bm_size, num_sensitive=num_sensitive, plot=True)
 
     for privacy_degree in p_degree_list:
         # Apply CAHD algorithm to create
