@@ -10,13 +10,12 @@ from band_matrix import compute_band_matrix, logger
 
 if __name__ == "__main__":
     bm_size = 1000  # band matrix size
-    num_sensitive = 10  # number of sensitive items
+    num_sensitive = 20  # number of sensitive items
     # p_degree = 5  # the degree of privacy
     alpha = 3
     # [4, 6, 8, 10, 12, 14, 16, 18, 20]
     p_degree_list = [4, 6, 8, 10, 12, 14, 16, 18, 20]
 
-    # TODO: note execution times for CAHD and KLD computations for plots
     CAHD_execution_times = list()
     KLD_execution_times = list()
     KL_values = list()
