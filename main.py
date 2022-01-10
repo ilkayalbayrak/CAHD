@@ -8,18 +8,6 @@ import random
 from band_matrix import compute_band_matrix, logger
 
 
-def write_to_file(folder_path, file_name, num_sensitive, bm_size, p_degree_list, plotable_data):
-    file = open(f"{folder_path}/{file_name}", "w")
-    file.write(f"num_sensitive {num_sensitive}\n")
-    file.write(f"bm_size {bm_size}\n")
-    logger("p degree list lenght", len(p_degree_list))
-    logger("KL values list length ", len(KL_values))
-
-    for idx in range(len(p_degree_list)):
-        file.write(f"{p_degree_list[idx]} {plotable_data[idx]}\n")
-    file.close()
-
-
 if __name__ == "__main__":
     bm_size = 1000  # band matrix size
     num_sensitive = 10  # number of sensitive items
@@ -31,7 +19,6 @@ if __name__ == "__main__":
     # TODO: note execution times for CAHD and KLD computations for plots
     CAHD_execution_times = list()
     KLD_execution_times = list()
-
     KL_values = list()
 
     # load the data
@@ -55,7 +42,7 @@ if __name__ == "__main__":
         cahd.create_groups()
         end_time = time.time() - start_time
         # append CAHD execution time for current parameters
-        CAHD_execution_times.append(end_time)
+        CAHD_execution_times.append(int(end_time))
         print(f"Privacy-degree: {cahd.p_degree}\nTime required for creating the anonymized groups: {end_time}\n")
 
         r = 4
@@ -101,7 +88,7 @@ if __name__ == "__main__":
 
         # append KLD values and respective calculation times
         end_time = time.time() - start_time
-        KLD_execution_times.append(end_time)
+        KLD_execution_times.append(int(end_time))
         KL_values.append(KL_Divergence)
 
     # open a file to note KLD values for different privacy degrees
