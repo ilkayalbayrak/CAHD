@@ -63,5 +63,5 @@ def sequence_to_binary_matrix(data_path, item_names_path, output_path):
 
 
 if __name__ == "__main__":
-    find_unique_items("./Dataset/BMS1_spmf.txt", "./Dataset/BMS1_item_names.txt")
-    sequence_to_binary_matrix("./Dataset/BMS1_spmf.txt", "./Dataset/BMS1_item_names.txt", "./Dataset/BMS1_table.csv")
+    # find_unique_items("./Dataset/BMS2.txt", "./Dataset/BMS2_item_names.txt")
+    sequence_to_binary_matrix("./Dataset/BMS2.txt", "./Dataset/BMS2_item_names.txt", "./Dataset/BMS2_table.csv")

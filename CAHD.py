@@ -7,7 +7,7 @@ import pandas as pd
 
 
 class CAHD:
-    original_dataframe = None  # copia del dataframe bandizzato
+    # original_dataframe = None
     id_sensitive_transaction = None  # list of sensitive transactions id
     band_matrix = None  # banded matrix, output of RCM
     sensitive_items = None  # list of sensitive items
@@ -20,12 +20,12 @@ class CAHD:
     QID_items = None  # list of quasi identifiers
 
     def __init__(self, band_matrix, sensitive_items, p_degree, alpha_=4):
-        self.original_dataframe = band_matrix.copy()
+        # self.original_dataframe = band_matrix.copy()
         self.band_matrix = band_matrix
         self.sensitive_items = sensitive_items
         self.p_degree = p_degree
         self.alpha_ = alpha_
-        self.QID_items = [i for i in list(self.original_dataframe) if i not in self.sensitive_items]
+        self.QID_items = [i for i in list(self.band_matrix) if i not in self.sensitive_items]
 
     def compute_hist(self):
         # call band matrix

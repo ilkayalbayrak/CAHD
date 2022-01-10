@@ -95,7 +95,8 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
         # plt.spy(df_square, marker='.', markersize='1')
 
         # select sensitive items
-        sensitive_items = np.random.choice(df_square.columns, num_sensitive)
+        sensitive_items = df_square.columns[-num_sensitive:]
+        # sensitive_items = np.random.choice(df_square.columns, num_sensitive)
         logger('Sensitive items', sensitive_items)
 
         # Convert df to sparse matrix format
