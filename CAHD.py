@@ -28,33 +28,31 @@ class CAHD:
         self.QID_items = [i for i in list(self.band_matrix) if i not in self.sensitive_items]
 
     def compute_hist(self):
+        """
+        Creates a histogram of sensitive items
+
+        :return: histogram
+        """
+
         # call band matrix
         # get the hist of sensitive items
-        logger('band matrix', self.band_matrix)
-        logger('sensitive items', self.sensitive_items)
-
         self.hist = dict(self.band_matrix[self.sensitive_items].sum())
         return self.hist
 
     def check_conflict(self, row_i, position_j):
-        # function for checking any sensitive items in conflict in the same group
-        # if there are sensitive items in common, there is conflict
+        """
+         function for checking any sensitive items in conflict in the same group
+         if there are sensitive items in common, there is conflict
+
+        :param row_i: The row
+        :param position_j:
+        :return:
+        """
         row_j = list(self.band_matrix.iloc[position_j][self.sensitive_items])
         for position in range(len(self.sensitive_items)):
             if row_i[position] + row_j[position] > 1:
                 return True
         return False
-
-    # def check_conflict(self, row_i, row_j):
-    # function for checking any sensitive items in conflict in the same group
-    # if there are sensitive items in common, there is conflict
-    #     sensitive_data_row_i = self.sensitive_items[np.where(self.band_matrix.iloc[row_i][self.sensitive_items] == 1)]
-    #     sensitive_data_row_i = self.sensitive_items[np.where(self.band_matrix.iloc[row_j][self.sensitive_items] == 1)]
-    #     # create set
-    #     set_j = set(sensitive_data_row_i)
-    #     set_i = set(sensitive_data_row_i)
-    #     # check intersection
-    #     return len(set_i.intersection(set_j)) > 0
 
     # function for checking the final validity state of the group
     # mainly for reducing the code redundancy in compute_candidate_list function
@@ -171,7 +169,6 @@ class CAHD:
                 self.group_dict = group_dict
                 return True
         return False
-
 
 # if __name__ == "__main__":
 #     df = pd.read_csv('./Dataset/BMS1_table.csv', index_col=False)

@@ -10,6 +10,15 @@ def logger(label, obj):
 
 
 def plot_band_matrix(square_matrix, square_band_matrix, bandwidth_1, bandwidth_2, save_plot=False):
+    """
+
+    :param square_matrix: Square piece extracted from the original sparse transaction data
+    :param square_band_matrix: Resulting band matrix after applying RCM to square matrix
+    :param bandwidth_1: Original bandwidth
+    :param bandwidth_2: Reduced bandwidth after applying RCM
+    :param save_plot: Boolean value for saving the plot of band matrix; before-after
+    :return:
+    """
     f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
     f.set_figheight(8)
     f.set_figwidth(16)
@@ -30,6 +39,15 @@ def plot_band_matrix(square_matrix, square_band_matrix, bandwidth_1, bandwidth_2
 
 
 def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False):
+    """
+
+    :param dataset: Original dataset
+    :param bm_size: Edge length of the square matrix (soon to be band-matrix)
+    :param num_sensitive: Number of sensitive items
+        Since there is no way to know which items are sensitive, we tag a chosen number of them as sensitive
+    :param plot:
+    :return: band-matrix, item list, sensitive items list
+    """
     # input : unsymmetric matrix A
     # compute symmetric matrix B = AxA.T
     # sigma = RCM(sigma)
