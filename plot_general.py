@@ -18,7 +18,6 @@ if __name__ == "__main__":
     # plot KLD vs p degree
     plt.figure(figsize=(12, 8))
 
-    # BMS1  m 10
     x_range = [6, 8, 10, 12, 14, 16, 18, 20]
     BMS1_m10 = BMS1_m10_privacy_ranged_df[BMS1_m10_privacy_ranged_df["KLD_value"] > 0]
     BMS1_m20 = BMS1_m20_privacy_ranged_df[BMS1_m20_privacy_ranged_df["KLD_value"] > 0]
@@ -27,6 +26,7 @@ if __name__ == "__main__":
     BMS1_p20 = BMS1_p20_sensitive_ranged[BMS1_p20_sensitive_ranged["KLD_value"]>0]
     logger("XXXXXXXX", BMS1_m10)
 
+    # Plot KLD values wrt a range of privacy degrees
     plt.plot(BMS1_m10["p_degree"], BMS1_m10["KLD_value"], marker='o', linestyle='-', color='b', label="m=10")
     plt.plot(BMS1_m20["p_degree"], BMS1_m20["KLD_value"], marker='^', linestyle='-', color='r', label="m=20")
     plt.ylim(ymax=0.1)
@@ -40,6 +40,7 @@ if __name__ == "__main__":
     plt.savefig('./Plots/BMS1_p_vs_KLD.png')
     plt.show()
 
+    # Plot KLD values over a changing quantity of sensitive items
     x_range = [4, 6, 8, 10, 12, 14, 16, 18, 20]
     plt.figure(figsize=(12, 8))
     plt.plot(BMS1_p10["num_sensitive"], BMS1_p10["KLD_value"], marker='o', linestyle='-', color='b', label="p=10")
@@ -50,11 +51,24 @@ if __name__ == "__main__":
     plt.xlabel("Number of Sensitive Items")
     plt.ylabel("KL_Divergence")
     plt.xticks(x_range, x_range)
-    plt.title("KLD values over a range of p degrees (r = 4) BMS1 m = 10 & m = 20 ")
+    plt.title("KLD values over a range of number of sensitive items  (r = 4) BMS1 p = 10 & p = 20 ")
     plt.legend()
     plt.savefig('./Plots/BMS1_m_vs_KLD.png')
     plt.show()
-    # plt.title("Reconstruction Error vs p (r = 4) BMS1 m = 10 & m = 20 ")
-    # plot KLD vs num sensitive
-    # plot computation times
-    # plot band matrix
+
+    # Plot CAHD execution times vs privacy degrees
+    x_range = [4, 6, 8, 10, 12, 14, 16, 18, 20]
+    plt.figure(figsize=(12, 8))
+    plt.plot(BMS1_m10_privacy_ranged_df["p_degree"], BMS1_m10_privacy_ranged_df["CAHD_exec_time"], marker='o', linestyle='-', color='b', label="m=10")
+    plt.plot(BMS1_m20_privacy_ranged_df["p_degree"], BMS1_m20_privacy_ranged_df["CAHD_exec_time"], marker='^', linestyle='-', color='r', label="m=20")
+    # plt.ylim(ymax=0.2)
+    plt.ylim(ymin=0)
+    # plt.xlim(xmin=0)
+    plt.xlabel("Number of Sensitive Items")
+    plt.ylabel("Execution Time (Seconds)")
+    plt.xticks(x_range, x_range)
+    plt.title("CAHD Execution Times Over Privacy Degrees (r = 4) BMS1 m = 10 & m = 20 ")
+    plt.legend()
+    plt.savefig('./Plots/BMS1_CAHD_exec_time_vs_p.png')
+    plt.show()
+
