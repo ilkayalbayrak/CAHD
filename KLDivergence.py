@@ -1,5 +1,6 @@
 import itertools
 from band_matrix import logger
+import numpy as np
 
 
 def compute_act_s_in_c(band_matrix, QID_list, QID_values, sensitive_items):
@@ -18,8 +19,8 @@ def compute_act_s_in_c(band_matrix, QID_list, QID_values, sensitive_items):
     row_sensitive = list()
 
     if type(sensitive_items) is str:
-        print("computing act s in c")
-        logger("type(sensitive_items) TRUE", row_sensitive)
+        # print("computing act s in c")
+        # logger("type(sensitive_items) TRUE", row_sensitive)
         # logger("band_matrix[band_matrix[sensitive_items] == 1]",type(band_matrix[band_matrix[sensitive_items] == 1].index.tolist()[0]))
 
         row_sensitive = band_matrix[band_matrix[sensitive_items] == 1].index.tolist()
@@ -94,3 +95,32 @@ def get_all_combination_of_n(n):
     """
     lst = [list(i) for i in itertools.product([0, 1], repeat=n)]
     return lst
+
+
+def compute_KLDivergence_value(band_matrix, QID_select, SD_groups, group_list, sensitive_item, all_combinations_C):
+    """
+    Function for calculating the KLDivergence value
+    :param band_matrix:
+    :param QID_select:
+    :param SD_groups:
+    :param group_list:
+    :param sensitive_item:
+    :param all_combinations_C:
+    :return:
+    """
+
+    # calculate actsc and estsc  for KL Divergence
+    KL_Divergence = 0
+    for value in all_combinations_C:
+        actsc = compute_act_s_in_c(band_matrix, QID_select, value, sensitive_item)
+        estsc = compute_est_s_in_c(band_matrix, SD_groups,
+                                   group_list, QID_select, value, sensitive_item)
+
+        print(f"\n{'-'*20}\nACTSC value: {actsc}, ESTSC value: {estsc}")
+
+        if actsc > 0 and estsc > 0:
+            temp = actsc * np.log(actsc / estsc)
+        else:
+            temp = 0
+        KL_Divergence = KL_Divergence + temp
+    return KL_Divergence
