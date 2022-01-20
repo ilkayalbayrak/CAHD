@@ -1,19 +1,19 @@
 import pandas as pd
-from CAHD import CAHD
+from cahd_update import CAHD
 import time
 import numpy as np
 import KLDivergence
 import random
 from band_matrix import compute_band_matrix, logger
 
-
 if __name__ == "__main__":
     bm_size = 1000  # band matrix size
-    num_sensitive = 20  # number of sensitive items
+    num_sensitive = 10  # number of sensitive items
     # p_degree = 5  # the degree of privacy
     alpha = 3
     # [4, 6, 8, 10, 12, 14, 16, 18, 20]
-    p_degree_list = [4, 6, 8, 10, 12, 14, 16, 18, 20]
+    # p_degree_list = [4, 6, 8, 10, 12, 14, 16, 18, 20]
+    p_degree_list = [4, 6]
 
     CAHD_execution_times = list()
     KLD_execution_times = list()
@@ -57,10 +57,6 @@ if __name__ == "__main__":
         # start timer for KLD computation
         start_time = time.time()
 
-        # computation of all combinations for cell C
-        all_value = KLDivergence.get_all_combination_of_n(r)
-        logger("KLD all combinations of n for cell C", all_value)
-
         # get the item with the most value from the histogram
         # change the item dtype to str because the column names(item names) in band matrix are str
         # otherwise they dont match and KL divergence calculation fails
@@ -69,21 +65,13 @@ if __name__ == "__main__":
         logger("DEBUG", df_square[df_square[sensitive_items] == 1].index.tolist())
         # logger("DEBUG 2", type(df_square[0].index[0]))
 
-        # calculate actsc and estsc  for KL Divergence
-        KL_Divergence = 0
+        # computation of all combinations for cell C
+        all_value = KLDivergence.get_all_combination_of_n(r)
+        # logger("KLD all combinations of n for cell C", all_value)
 
-        for value in all_value:
-            actsc = KLDivergence.compute_act_s_in_c(df_square, QID_select, value, sensitive_item)
-            logger("ACTSC value", actsc)
-            estsc = KLDivergence.compute_est_s_in_c(df_square, cahd.SD_groups,
-                                                    cahd.group_list, QID_select, value, sensitive_item)
-            logger("ESTSC value", estsc)
-            if actsc > 0 and estsc > 0:
-                temp = actsc * np.log(actsc / estsc)
-            else:
-                temp = 0
-            KL_Divergence = KL_Divergence + temp
-
+        # Calculate KL_Divergence value
+        KL_Divergence = KLDivergence.compute_KLDivergence_value(df_square, QID_select, cahd.SD_groups, cahd.group_list,
+                                                                sensitive_item, all_value)
         # append KLD values and respective calculation times
         end_time = time.time() - start_time
         KLD_execution_times.append(int(end_time))
@@ -106,4 +94,4 @@ if __name__ == "__main__":
         dict_to_plot["CAHD_exec_time"].append(CAHD_execution_times[idx])
 
     df_to_plot = pd.DataFrame.from_dict(dict_to_plot)
-    df_to_plot.to_csv(f"./Data_to_plot/BMS1_{bm_size}_{num_sensitive}.csv", index=False)
+    df_to_plot.to_csv(f"./Data_to_plot/TESTnew_cahd_BMS1_seed_13_{bm_size}_{num_sensitive}.csv", index=False)

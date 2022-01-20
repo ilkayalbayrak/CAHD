@@ -56,12 +56,13 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
 
     # TODO: Add a zero padding method for the 'matrix slicing' so we can have bigger matrices then len(items)
     if dataset is not None and len(dataset) >= bm_size:
-        logger('Original df head', dataset.head())
-        items = None # FIXME: this should probably go in the if else statements, rather than being global
+        # logger('Original df head', dataset.head())
+        # items = None # FIXME: this should probably go in the if else statements, rather than being global
         # logger('Items', items[:10])
 
         # define a random seed for np.random operations
         np.random.seed(seed=42)
+        # np.random.seed(seed=13)
 
         random_column = None
         random_row = None
@@ -71,10 +72,10 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
             items = dataset.columns # FIXME: this may need to be converted to a list explicitly, check if it runs correctly
             # random permutation of rows and columns
             random_column = np.random.permutation(dataset.shape[1])[:bm_size]
-            logger('Random columns', random_column[:10])
+            # logger('Random columns', random_column[:10])
 
             random_row = np.random.permutation(dataset.shape[0])[:bm_size]
-            logger('Random rows', random_row[:10])
+            # logger('Random rows', random_row[:10])
 
         else:
             random_row = np.random.permutation(dataset.shape[0])
@@ -103,11 +104,11 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
             dataset.columns = [str(i) for i in range(len(dataset.columns))]
 
         items_reordered = [items[i] for i in random_column]
-        logger('Items reordered', items_reordered[:10])
+        # logger('Items reordered', items_reordered[:10])
 
         # cut selected size of square piece from the dataset
         df_square = dataset.iloc[random_row, random_column]
-        logger('df_square', df_square.head())
+        # logger('df_square', df_square.head())
 
         # spy method is for plotting sparsity pattern of 2D arrays
         # plt.spy(df_square, marker='.', markersize='1')
@@ -115,7 +116,7 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
         # select sensitive items
         sensitive_items = df_square.columns[-num_sensitive:]
         # sensitive_items = np.random.choice(df_square.columns, num_sensitive)
-        logger('Sensitive items', sensitive_items)
+        # logger('Sensitive items', sensitive_items)
 
         # Convert df to sparse matrix format
         sparse = csr_matrix(df_square)
@@ -125,18 +126,18 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
         # therefore no need to try to create a symmetric matric beforehand
         # TODO: try out preparing a symmetric input matrix to see if anything changes
         order = reverse_cuthill_mckee(sparse)
-        logger('RCM', order)
+        # logger('RCM', order)
         # plt.spy(order, marker='.', markersize='1')
 
 
         columns_final_order = [df_square.columns[i] for i in order]
-        logger('Columns final order', columns_final_order)
+        # logger('Columns final order', columns_final_order)
 
         # items_final_order = [items_reordered[i] for i in order]
         items_final_order = [items_reordered[i] for i in order]
 
-        logger('Items final order', items_final_order)
-        logger('Items final order LENGTH', len(items_final_order))
+        # logger('Items final order', items_final_order)
+        # logger('Items final order LENGTH', len(items_final_order))
         # items_final_test = dict(zip(columns_final_order, items_final_order))
         # logger("######################3 TEST ###############3", list(items_final_test))
 
