@@ -72,12 +72,13 @@ if __name__ == "__main__":
         # calculate actsc and estsc  for KL Divergence
         KL_Divergence = 0
 
+        # TODO: convert this into a function within the KLDivergence.py
         for value in all_value:
             actsc = KLDivergence.compute_act_s_in_c(df_square, QID_select, value, sensitive_item)
-            logger("ACTSC value", actsc)
+            # logger("ACTSC value", actsc)
             estsc = KLDivergence.compute_est_s_in_c(df_square, cahd.SD_groups,
                                                     cahd.group_list, QID_select, value, sensitive_item)
-            logger("ESTSC value", estsc)
+            # logger("ESTSC value", estsc)
             if actsc > 0 and estsc > 0:
                 temp = actsc * np.log(actsc / estsc)
             else:

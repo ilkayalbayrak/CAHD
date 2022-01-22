@@ -36,9 +36,11 @@ if __name__ == "__main__":
         print(cahd.group_dict)
         cahd.compute_hist()
         hist_item = cahd.hist
-        print("Start Anonymization process")
+        print(f"\nStarting the anonymization process for Privacy_Degree: {privacy_degree}")
+        logger("Histogram Items", hist_item)
         cahd.create_groups()
         end_time = time.time() - start_time
+
         # append CAHD execution time for current parameters
         CAHD_execution_times.append(int(end_time))
         print(f"Privacy-degree: {cahd.p_degree}\nTime required for creating the anonymized groups: {end_time}\n")
@@ -52,7 +54,7 @@ if __name__ == "__main__":
             if temp not in QID_select:
                 QID_select.append(temp)
 
-        logger("QID select", QID_select)
+        # logger("QID select", QID_select)
 
         # start timer for KLD computation
         start_time = time.time()
@@ -62,7 +64,7 @@ if __name__ == "__main__":
         # otherwise they dont match and KL divergence calculation fails
         sensitive_item = str(max(hist_item.keys(), key=(lambda k: hist_item[k])))
         logger("Sensitive item, MAX VAL from histogram", sensitive_item)
-        logger("DEBUG", df_square[df_square[sensitive_items] == 1].index.tolist())
+        # logger("DEBUG", df_square[df_square[sensitive_items] == 1].index.tolist())
         # logger("DEBUG 2", type(df_square[0].index[0]))
 
         # computation of all combinations for cell C
@@ -72,6 +74,10 @@ if __name__ == "__main__":
         # Calculate KL_Divergence value
         KL_Divergence = KLDivergence.compute_KLDivergence_value(df_square, QID_select, cahd.SD_groups, cahd.group_list,
                                                                 sensitive_item, all_value)
+
+        print(f"\n{'-' * 20}\nKL_Divergence:{KL_Divergence}, Privacy degree: {privacy_degree},"
+              f"Sensitive Item: {sensitive_item}\nQID_select: {QID_select}\n{'-' * 20}\n")
+
         # append KLD values and respective calculation times
         end_time = time.time() - start_time
         KLD_execution_times.append(int(end_time))

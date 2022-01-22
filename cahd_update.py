@@ -7,7 +7,7 @@ import pandas as pd
 
 
 class CAHD:
-    # original_dataframe = None
+    original_dataframe = None
     id_sensitive_transaction = None  # list of sensitive transactions id
     band_matrix = None  # banded matrix, output of RCM
     sensitive_items = None  # list of sensitive items
@@ -45,10 +45,10 @@ class CAHD:
         :param privacy_grade:
         :return:
         """
-        # TODO: try to change this from just max hist value to for all hist values
-        value = max(self.hist.values())
-        if value * privacy_grade > len(self.band_matrix):
-            return False
+        # value = max(self.hist.values())
+        for value in self.hist.values():
+            if value * privacy_grade > len(self.original_dataframe):
+                return False
         return True
 
     def check_conflict(self, row_i, position_j):
@@ -114,12 +114,15 @@ class CAHD:
         """
         alpha_p = self.alpha_ * self.p_degree
         candidate_list = list()
+
+        # search backwards for CL
         k = 1
         i = idx_sensitive_transaction - 1
         while i > max(idx_sensitive_transaction - alpha_p - k, -1):
             k = self.check_list(i, idx_sensitive_transaction, k, candidate_list)
             i -= 1
 
+        # search forward for CL
         k = 1
         i = idx_sensitive_transaction + 1
         while i < min(idx_sensitive_transaction + alpha_p + k, len(self.band_matrix)):
@@ -141,6 +144,7 @@ class CAHD:
         # compute histogram of sensitive items
         self.compute_hist()
 
+        # Check if the intended degree of privacy is attainable
         while not p_degree_satisfied and temp_privacy > 0:
             p_degree_satisfied = self.check_privacy_grade(temp_privacy)
             if not p_degree_satisfied:
@@ -153,64 +157,97 @@ class CAHD:
         group_list = list()
         sd_groups = list()
 
-        for att in range(1):
-            id_sensitive_transaction = np.random.permutation(self.id_sensitive_transaction)
-            remaining = len(self.band_matrix)
-            ts_idx = 0  # sensitive transaction index
-            while ts_idx < len(id_sensitive_transaction):
-                q = id_sensitive_transaction[ts_idx]
-                t = self.band_matrix.index.get_loc(q)
-                candidate_list, error = self.compute_candidate_list(t)
-                if not error:
-                    group = self.select_best_transactions(candidate_list, t)
-                    group.append(t)
+        id_sensitive_transaction = np.random.permutation(self.id_sensitive_transaction)
+        logger("Indexes of sensitive transactions", id_sensitive_transaction)
+        remaining = len(self.band_matrix)
 
-                    # update histogram
-                    selected_sensitive_items = self.band_matrix.iloc[group][self.sensitive_items].sum()
-                    temp_hist = self.hist.copy()
-                    for idx in selected_sensitive_items.index:
-                        temp_hist[idx] -= selected_sensitive_items.loc[idx]
+        st_index = 0  # sensitive transaction index
+        while st_index < len(id_sensitive_transaction):
+            logger("Sensitive transaction index", st_index)
+            # select sensitive transaction
+            q = id_sensitive_transaction[st_index]
+            logger("Selected sensitive transaction/id_sensitive_transaction[st_index] Q",q)
+            t = self.band_matrix.index.get_loc(q)
+            candidate_list, error = self.compute_candidate_list(t)
 
-                    # check formation of group or the creation of the last group
-                    th_max = max(temp_hist.values())
-                    if th_max * self.p_degree > remaining - len(group):
-                        ts_idx += 1
-                    else:
-                        self.hist = temp_hist.copy()
-                        group_label = self.band_matrix.iloc[group].index
-                        id_sensitive_transaction = [i for i in id_sensitive_transaction if i not in group_label]
+            if not error:
+                group = self.select_best_transactions(candidate_list, t)
 
-                        group_dict.append(self.band_matrix.index[group])
-                        group_list.append(
-                            self.band_matrix.loc[list(self.band_matrix.index[group]), self.QID_items])
+                # append target transaction
+                group.append(t)
 
-                        sd_groups.append(selected_sensitive_items)
+                # update histogram
+                selected_sensitive_items = self.band_matrix.iloc[group][self.sensitive_items].sum()
+                temp_hist = self.hist.copy()
+                for idx in selected_sensitive_items.index:
+                    temp_hist[idx] -= selected_sensitive_items.loc[idx]
 
-                        self.band_matrix = self.band_matrix.drop(
-                            list(self.band_matrix.index[group]))
+                privacy_satisfied = False
+                for idx in temp_hist.keys():
+                    if temp_hist[idx] * self.p_degree > remaining:
+                        print(f"################################################\nPRIVACY SATISFIED temp_hist[idx]:{temp_hist[idx]}\n")
+                        privacy_satisfied = True
+                        st_index += 1
+                        break
 
-                        remaining = len(self.band_matrix.index)
-                else:
-                    ts_idx += 1
-            # create the last group and update data structures
-            selected_sensitive_items = self.band_matrix[self.sensitive_items].sum()
-            max_v = max(dict(selected_sensitive_items).values())
-            if max_v * self.p_degree <= len(self.band_matrix):
-                group_list.append(self.band_matrix[self.QID_items])
-                group_dict.append(self.band_matrix.index)
-                sd_groups.append(selected_sensitive_items)
-                self.band_matrix = None
-                self.SD_groups = sd_groups
-                self.group_list = group_list
-                self.group_dict = group_dict
-                return True
+                if not privacy_satisfied:
+                    self.hist = temp_hist.copy()
+                    label_group = self.band_matrix.iloc[group].index
+                    id_sensitive_transaction = [i for i in id_sensitive_transaction if i not in label_group]
+
+                    group_dict.append(self.band_matrix.index[group])
+                    group_list.append(
+                        self.band_matrix.loc[list(self.band_matrix.index[group]), self.QID_items])
+
+                    sd_groups.append(selected_sensitive_items)
+
+                    self.band_matrix = self.band_matrix.drop(
+                        list(self.band_matrix.index[group]))
+
+                    remaining = len(self.band_matrix.index)
+
+                # check formation of group or the creation of the last group
+                # th_max = max(temp_hist.values())
+                # if th_max * self.p_degree > remaining - len(group):
+                #     st_index += 1
+
+                # else:
+                #     self.hist = temp_hist.copy()
+                #     label_group = self.band_matrix.iloc[group].index
+                #     id_sensitive_transaction = [i for i in id_sensitive_transaction if i not in label_group]
+                #
+                #     group_dict.append(self.band_matrix.index[group])
+                #     group_list.append(
+                #         self.band_matrix.loc[list(self.band_matrix.index[group]), self.QID_items])
+                #
+                #     sd_groups.append(selected_sensitive_items)
+                #
+                #     self.band_matrix = self.band_matrix.drop(
+                #         list(self.band_matrix.index[group]))
+                #
+                #     remaining = len(self.band_matrix.index)
+            else:
+                st_index += 1
+        # create the last group and update data structures
+        selected_sensitive_items = self.band_matrix[self.sensitive_items].sum()
+        max_v = max(dict(selected_sensitive_items).values())
+        if max_v * self.p_degree <= len(self.band_matrix):
+            group_list.append(self.band_matrix[self.QID_items])
+            group_dict.append(self.band_matrix.index)
+            sd_groups.append(selected_sensitive_items)
+            self.band_matrix = None
+            self.SD_groups = sd_groups
+            self.group_list = group_list
+            self.group_dict = group_dict
+            return True
         return False
 
-# if __name__ == "__main__":
-#     df = pd.read_csv('./Dataset/BMS1_table.csv', index_col=False)
-#     df_square, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=487, num_sensitive=10, plot=True)
-#     print(df_square.shape)
-#
-#     cahd = CAHD(band_matrix=df_square, sensitive_items=sensitive_items, p_degree=4, alpha_=4)
-#     cahd.create_groups()
-#     print(cahd.group_dict)
+
+if __name__ == "__main__":
+    df = pd.read_csv('./Dataset/BMS1_table.csv', index_col=False)
+    df_square, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=487, num_sensitive=10, plot=True)
+    print(df_square.shape)
+
+    cahd = CAHD(band_matrix=df_square, sensitive_items=sensitive_items, p_degree=4, alpha_=4)
+    cahd.create_groups()
+    print(cahd.group_dict)

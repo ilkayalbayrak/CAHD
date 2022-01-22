@@ -108,7 +108,6 @@ def compute_KLDivergence_value(band_matrix, QID_select, SD_groups, group_list, s
     :param all_combinations_C:
     :return:
     """
-
     # calculate actsc and estsc  for KL Divergence
     KL_Divergence = 0
     for value in all_combinations_C:
@@ -116,11 +115,13 @@ def compute_KLDivergence_value(band_matrix, QID_select, SD_groups, group_list, s
         estsc = compute_est_s_in_c(band_matrix, SD_groups,
                                    group_list, QID_select, value, sensitive_item)
 
-        print(f"\n{'-'*20}\nACTSC value: {actsc}, ESTSC value: {estsc}")
+        print(f"Value: {value}, ACTSC value: {actsc}, ESTSC value: {estsc}, "
+              f"Sensitive Item: {sensitive_item}")
 
         if actsc > 0 and estsc > 0:
             temp = actsc * np.log(actsc / estsc)
         else:
             temp = 0
         KL_Divergence = KL_Divergence + temp
+
     return KL_Divergence
