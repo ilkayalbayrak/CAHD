@@ -4,6 +4,9 @@
 better RCM result
 
 
+IN CAHD, CHECK PRIVAY GRADE METHOD IS MISSING, AND THI IS PROBABLY THE PROBLEM WITH OUR RESULTS 
+
+
 ###--- Details ---###
 CAHD scans transaction set T in row order, finds the first
 sensitive transaction in the sequence, and attempts to form an

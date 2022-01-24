@@ -64,6 +64,7 @@ if __name__ == "__main__":
         # otherwise they dont match and KL divergence calculation fails
         sensitive_item = str(max(hist_item.keys(), key=(lambda k: hist_item[k])))
         logger("Sensitive item, MAX VAL from histogram", sensitive_item)
+        logger("hist_item",hist_item )
         # logger("DEBUG", df_square[df_square[sensitive_items] == 1].index.tolist())
         # logger("DEBUG 2", type(df_square[0].index[0]))
 
@@ -73,7 +74,7 @@ if __name__ == "__main__":
 
         # Calculate KL_Divergence value
         KL_Divergence = KLDivergence.compute_KLDivergence_value(df_square, QID_select, cahd.SD_groups, cahd.group_list,
-                                                                sensitive_item, all_value)
+                                                                sensitive_items, all_value)
 
         print(f"\n{'-' * 20}\nKL_Divergence:{KL_Divergence}, Privacy degree: {privacy_degree},"
               f"Sensitive Item: {sensitive_item}\nQID_select: {QID_select}\n{'-' * 20}\n")

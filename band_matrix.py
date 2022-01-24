@@ -61,8 +61,8 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
         # logger('Items', items[:10])
 
         # define a random seed for np.random operations
-        np.random.seed(seed=42)
-        # np.random.seed(seed=13)
+        # np.random.seed(seed=42)
+        np.random.seed(seed=13)
 
         random_column = None
         random_row = None
@@ -113,6 +113,7 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
         # spy method is for plotting sparsity pattern of 2D arrays
         # plt.spy(df_square, marker='.', markersize='1')
 
+        # TODO: Select sensitive items (columns) before populating the matrix with zeros
         # select sensitive items
         sensitive_items = df_square.columns[-num_sensitive:]
         # sensitive_items = np.random.choice(df_square.columns, num_sensitive)

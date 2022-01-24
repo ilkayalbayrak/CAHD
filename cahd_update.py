@@ -158,15 +158,15 @@ class CAHD:
         sd_groups = list()
 
         id_sensitive_transaction = np.random.permutation(self.id_sensitive_transaction)
-        logger("Indexes of sensitive transactions", id_sensitive_transaction)
+        # logger("Indexes of sensitive transactions", id_sensitive_transaction)
         remaining = len(self.band_matrix)
 
         st_index = 0  # sensitive transaction index
         while st_index < len(id_sensitive_transaction):
-            logger("Sensitive transaction index", st_index)
+            # logger("Sensitive transaction index", st_index)
             # select sensitive transaction
             q = id_sensitive_transaction[st_index]
-            logger("Selected sensitive transaction/id_sensitive_transaction[st_index] Q",q)
+            # logger("Selected sensitive transaction/id_sensitive_transaction[st_index] Q",q)
             t = self.band_matrix.index.get_loc(q)
             candidate_list, error = self.compute_candidate_list(t)
 
@@ -205,9 +205,12 @@ class CAHD:
                         list(self.band_matrix.index[group]))
 
                     remaining = len(self.band_matrix.index)
+                    # logger("REMAINING",remaining)
 
                 # check formation of group or the creation of the last group
-                # th_max = max(temp_hist.values())
+                th_max = max(temp_hist.values())
+                logger("TH_MAX of histogram", th_max)
+                logger("temp_hist", temp_hist)
                 # if th_max * self.p_degree > remaining - len(group):
                 #     st_index += 1
 
