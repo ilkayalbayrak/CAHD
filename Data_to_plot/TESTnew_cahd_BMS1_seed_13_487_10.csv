@@ -1,0 +1,3 @@
+num_sensitive,bm_size,r,p_degree,KLD_value,KLD_exec_time,CAHD_exec_time
+10,487,4,4,0.0970851638830842,4,2
+10,487,4,6,0.12607690550097414,4,8

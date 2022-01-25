@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 from band_matrix import compute_band_matrix, logger
 
 if __name__ == "__main__":
-    BMS1_m10_privacy_ranged_df = pd.read_csv("./Data_to_plot/BMS1_1000_10.csv")
-    BMS1_m20_privacy_ranged_df = pd.read_csv("./Data_to_plot/BMS1_1000_20.csv")
+    BMS1_m10_privacy_ranged_df = pd.read_csv("./Data_to_plot/BMS1_seed_13_1000_10.csv")
+    BMS1_m20_privacy_ranged_df = pd.read_csv("./Data_to_plot/BMS1_seed_13_1000_20.csv")
 
     BMS1_p10_sensitive_ranged = pd.read_csv("./Data_to_plot/BMS1_1000_10_num_sensitive_change.csv")
     BMS1_p20_sensitive_ranged = pd.read_csv("./Data_to_plot/BMS1_1000_20_num_sensitive_change.csv")

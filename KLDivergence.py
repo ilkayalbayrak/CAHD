@@ -124,6 +124,7 @@ def compute_KLDivergence_value(band_matrix, QID_select, SD_groups, group_list, s
     #         temp = 0
     #     KL_Divergence = KL_Divergence + temp
     for s_item in sensitive_items:
+        temp_KLD = 0
         for value in all_combinations_C:
             actsc = compute_act_s_in_c(band_matrix, QID_select, value, s_item)
             estsc = compute_est_s_in_c(band_matrix, SD_groups,
@@ -136,7 +137,10 @@ def compute_KLDivergence_value(band_matrix, QID_select, SD_groups, group_list, s
                 temp = actsc * np.log(actsc / estsc)
             else:
                 temp = 0
-            KL_Divergence = KL_Divergence + temp
-        print(f"KLDivergence: {KL_Divergence} Sensitive Item: {s_item}")
+
+            # temp_KLD is just for printing KLD value per sensitive item
+            temp_KLD += temp
+            KL_Divergence += temp
+        print(f"KLDivergence: {temp_KLD} Sensitive Item: {s_item}")
 
     return KL_Divergence

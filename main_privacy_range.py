@@ -8,12 +8,12 @@ from band_matrix import compute_band_matrix, logger
 
 if __name__ == "__main__":
     bm_size = 1000  # band matrix size
-    num_sensitive = 10  # number of sensitive items
+    num_sensitive = 20  # number of sensitive items
     # p_degree = 5  # the degree of privacy
     alpha = 3
     # [4, 6, 8, 10, 12, 14, 16, 18, 20]
-    # p_degree_list = [4, 6, 8, 10, 12, 14, 16, 18, 20]
-    p_degree_list = [4, 6]
+    p_degree_list = [4, 6, 8, 10, 12, 14, 16, 18, 20]
+    # p_degree_list = [4, 6]
 
     CAHD_execution_times = list()
     KLD_execution_times = list()
@@ -63,8 +63,8 @@ if __name__ == "__main__":
         # change the item dtype to str because the column names(item names) in band matrix are str
         # otherwise they dont match and KL divergence calculation fails
         sensitive_item = str(max(hist_item.keys(), key=(lambda k: hist_item[k])))
-        logger("Sensitive item, MAX VAL from histogram", sensitive_item)
-        logger("hist_item",hist_item )
+        # logger("Sensitive item, MAX VAL from histogram", sensitive_item)
+        # logger("hist_item",hist_item )
         # logger("DEBUG", df_square[df_square[sensitive_items] == 1].index.tolist())
         # logger("DEBUG 2", type(df_square[0].index[0]))
 
@@ -76,7 +76,7 @@ if __name__ == "__main__":
         KL_Divergence = KLDivergence.compute_KLDivergence_value(df_square, QID_select, cahd.SD_groups, cahd.group_list,
                                                                 sensitive_items, all_value)
 
-        print(f"\n{'-' * 20}\nKL_Divergence:{KL_Divergence}, Privacy degree: {privacy_degree},"
+        print(f"\n{'-' * 20}\nKL_Divergence Total: {KL_Divergence}, Privacy degree: {privacy_degree},"
               f"Sensitive Item: {sensitive_item}\nQID_select: {QID_select}\n{'-' * 20}\n")
 
         # append KLD values and respective calculation times
@@ -101,4 +101,4 @@ if __name__ == "__main__":
         dict_to_plot["CAHD_exec_time"].append(CAHD_execution_times[idx])
 
     df_to_plot = pd.DataFrame.from_dict(dict_to_plot)
-    df_to_plot.to_csv(f"./Data_to_plot/TESTnew_cahd_BMS1_seed_13_{bm_size}_{num_sensitive}.csv", index=False)
+    df_to_plot.to_csv(f"./Data_to_plot/BMS1_seed_42_{bm_size}_{num_sensitive}.csv", index=False)

@@ -53,22 +53,23 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
     # sigma = RCM(sigma)
     # A'= permutation sigma applied to A
     # return A'
+    random_seed = 42
 
     # TODO: Add a zero padding method for the 'matrix slicing' so we can have bigger matrices then len(items)
     if dataset is not None and len(dataset) >= bm_size:
         # logger('Original df head', dataset.head())
-        # items = None # FIXME: this should probably go in the if else statements, rather than being global
+        items = None # FIXME: this should probably go in the if else statements, rather than being global
         # logger('Items', items[:10])
 
         # define a random seed for np.random operations
         # np.random.seed(seed=42)
-        np.random.seed(seed=13)
 
         random_column = None
         random_row = None
 
         # check if we need to add zero filler columns
         if len(dataset.columns) >= bm_size:
+            np.random.seed(random_seed)
             items = dataset.columns # FIXME: this may need to be converted to a list explicitly, check if it runs correctly
             # random permutation of rows and columns
             random_column = np.random.permutation(dataset.shape[1])[:bm_size]
@@ -78,6 +79,7 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
             # logger('Random rows', random_row[:10])
 
         else:
+            np.random.seed(random_seed)
             random_row = np.random.permutation(dataset.shape[0])
             dataset = dataset.iloc[random_row][:bm_size]
             dataset = dataset.reset_index()
@@ -95,7 +97,7 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
             dataset = pd.concat([dataset, df_to_add], axis=1)
 
             # shuffle rows and cols
-            np.random.seed(seed=42)
+            np.random.seed(random_seed)
             items = dataset.columns
 
             random_column = np.random.permutation(dataset.shape[1])
