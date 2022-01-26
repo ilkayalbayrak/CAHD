@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 from band_matrix import compute_band_matrix, logger
 
 if __name__ == "__main__":
-    BMS1_m10_privacy_ranged_df = pd.read_csv("./Data_to_plot/BMS1_seed_13_1000_10.csv")
-    BMS1_m20_privacy_ranged_df = pd.read_csv("./Data_to_plot/BMS1_seed_13_1000_20.csv")
+    BMS1_m10_privacy_ranged_df = pd.read_csv("./Data_to_plot/BMS1_seed_42_1000_10.csv")
+    BMS1_m20_privacy_ranged_df = pd.read_csv("./Data_to_plot/BMS1_seed_42_1000_20.csv")
 
-    BMS1_p10_sensitive_ranged = pd.read_csv("./Data_to_plot/BMS1_1000_10_num_sensitive_change.csv")
-    BMS1_p20_sensitive_ranged = pd.read_csv("./Data_to_plot/BMS1_1000_20_num_sensitive_change.csv")
+    BMS1_p10_sensitive_ranged = pd.read_csv("./Data_to_plot/BMS1_seed_42_1000_p10_m_change.csv")
+    BMS1_p20_sensitive_ranged = pd.read_csv("./Data_to_plot/BMS1_seed_42_1000_p20_m_change.csv")
 
     logger("BMS1_m10_privacy_ranged_df", BMS1_m10_privacy_ranged_df)
     logger("BMS1_m20_privacy_ranged_df", BMS1_m20_privacy_ranged_df)
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     # Plot KLD values wrt a range of privacy degrees
     plt.plot(BMS1_m10["p_degree"], BMS1_m10["KLD_value"], marker='o', linestyle='-', color='b', label="m=10")
     plt.plot(BMS1_m20["p_degree"], BMS1_m20["KLD_value"], marker='^', linestyle='-', color='r', label="m=20")
-    plt.ylim(ymax=0.1)
+    # plt.ylim(ymax=0.1)
     plt.ylim(ymin=0)
     # plt.xlim(xmin=0)
     plt.xlabel("Privacy degree")
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     plt.figure(figsize=(12, 8))
     plt.plot(BMS1_p10["num_sensitive"], BMS1_p10["KLD_value"], marker='o', linestyle='-', color='b', label="p=10")
     plt.plot(BMS1_p20["num_sensitive"], BMS1_p20["KLD_value"], marker='^', linestyle='-', color='r', label="p=20")
-    plt.ylim(ymax=0.2)
+    # plt.ylim(ymax=0.2)
     plt.ylim(ymin=0)
     # plt.xlim(xmin=0)
     plt.xlabel("Number of Sensitive Items")
