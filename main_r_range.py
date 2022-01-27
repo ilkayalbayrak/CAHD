@@ -20,6 +20,7 @@ if __name__ == "__main__":
     KLD_execution_times = list()
     KL_values = list()
 
+
     # load the data
     data_path = './Dataset/BMS1_table.csv'
     df = pd.read_csv(data_path, index_col=False)

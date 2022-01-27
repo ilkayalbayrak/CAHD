@@ -6,22 +6,43 @@ import KLDivergence
 import random
 from band_matrix import compute_band_matrix, logger
 
+
+def chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+
 if __name__ == "__main__":
     bm_size = 1000  # band matrix size
-    num_sensitive = 20  # number of sensitive items
+    num_sensitive = 10  # number of sensitive items
     # p_degree = 5  # the degree of privacy
     alpha = 3
+    r = 4
     # [4, 6, 8, 10, 12, 14, 16, 18, 20]
     p_degree_list = [4, 6, 8, 10, 12, 14, 16, 18, 20]
-    # p_degree_list = [4, 6]
+    # p_degree_list = [4,6]
 
     CAHD_execution_times = list()
     KLD_execution_times = list()
     KL_values = list()
 
+    n_QID_combinations = 5
+
     # load the data
     data_path = './Dataset/BMS1_table.csv'
     df = pd.read_csv(data_path, index_col=False)
+
+    # open a file to note KLD values for different privacy degrees
+    # create df to write plotable data
+    dict_to_plot = {"num_sensitive": num_sensitive,
+                    "bm_size": bm_size,
+                    "r": r,
+                    "p_degree": [],
+                    "KLD_value": [],
+                    "KLD_exec_time": [],
+                    "CAHD_exec_time": []
+                    }
 
     # get the start time to calculate execution time
     start_time = time.time()
@@ -39,20 +60,26 @@ if __name__ == "__main__":
         print(f"\nStarting the anonymization process for Privacy_Degree: {privacy_degree}")
         logger("Histogram Items", hist_item)
         cahd.create_groups()
-        end_time = time.time() - start_time
+        cahd_ex_time = time.time() - start_time
 
         # append CAHD execution time for current parameters
-        CAHD_execution_times.append(int(end_time))
-        print(f"Privacy-degree: {cahd.p_degree}\nTime required for creating the anonymized groups: {end_time}\n")
+        CAHD_execution_times.append(int(cahd_ex_time))
+        print(f"Privacy-degree: {cahd.p_degree}\nTime required for creating the anonymized groups: {cahd_ex_time}\n")
 
-        r = 4
+
         QID = cahd.group_list[0].columns.tolist()
-        logger("QID list", QID)
-        QID_select = list()
-        while len(QID_select) < r:
-            temp = random.choice(QID)
-            if temp not in QID_select:
-                QID_select.append(temp)
+        # logger("QID list", QID)
+        # QID_select = list()
+        # # np.random.seed(42)
+        # # TODO: choose more QID_SELECT groups and calculate the average KL_divergence for them
+        # while len(QID_select) < r:
+        #     temp = random.choice(QID)
+        #     if temp not in QID_select:
+        #         QID_select.append(temp)
+        np.random.shuffle(QID)
+        # QID_select = [i for i in list(chunks(QID,r)) if len(i) == r][:5]
+        QID_select_list = list(chunks(QID,r))[:n_QID_combinations]
+
 
         # logger("QID select", QID_select)
 
@@ -72,33 +99,25 @@ if __name__ == "__main__":
         all_value = KLDivergence.get_all_combination_of_n(r)
         # logger("KLD all combinations of n for cell C", all_value)
 
-        # Calculate KL_Divergence value
-        KL_Divergence = KLDivergence.compute_KLDivergence_value(df_square, QID_select, cahd.SD_groups, cahd.group_list,
-                                                                sensitive_items, all_value)
+        for QID_select in QID_select_list:
+            # Calculate KL_Divergence value
+            KL_Divergence = KLDivergence.compute_KLDivergence_value(df_square, QID_select, cahd.SD_groups,
+                                                                    cahd.group_list,
+                                                                    sensitive_items, all_value)
 
-        print(f"\n{'-' * 20}\nKL_Divergence Total: {KL_Divergence}, Privacy degree: {privacy_degree},"
-              f"Sensitive Item: {sensitive_item}\nQID_select: {QID_select}\n{'-' * 20}\n")
+            print(f"\n{'-' * 20}\nKL_Divergence Total: {KL_Divergence}, Privacy degree: {privacy_degree},"
+                  f"Sensitive Item: {sensitive_item}\nQID_select: {QID_select}\n{'-' * 20}\n")
 
-        # append KLD values and respective calculation times
-        end_time = time.time() - start_time
-        KLD_execution_times.append(int(end_time))
-        KL_values.append(KL_Divergence)
+            # append KLD values and respective calculation times
+            end_time = time.time() - start_time
+            KLD_execution_times.append(int(end_time))
+            KL_values.append(KL_Divergence)
 
-    # open a file to note KLD values for different privacy degrees
-    # create df to write plotable data
-    dict_to_plot = {"num_sensitive": num_sensitive,
-                    "bm_size": bm_size,
-                    "r": 4,
-                    "p_degree": [],
-                    "KLD_value": [],
-                    "KLD_exec_time": [],
-                    "CAHD_exec_time": []
-                    }
-    for idx in range(len(p_degree_list)):
-        dict_to_plot["p_degree"].append(p_degree_list[idx])
-        dict_to_plot["KLD_value"].append(KL_values[idx])
-        dict_to_plot["KLD_exec_time"].append(KLD_execution_times[idx])
-        dict_to_plot["CAHD_exec_time"].append(CAHD_execution_times[idx])
+            dict_to_plot["p_degree"].append(privacy_degree)
+            dict_to_plot["KLD_value"].append(KL_Divergence)
+            dict_to_plot["KLD_exec_time"].append(end_time)
+            dict_to_plot["CAHD_exec_time"].append(cahd_ex_time)
+
 
     df_to_plot = pd.DataFrame.from_dict(dict_to_plot)
-    df_to_plot.to_csv(f"./Data_to_plot/BMS1_seed_42_{bm_size}_{num_sensitive}.csv", index=False)
+    df_to_plot.to_csv(f"./Data_to_plot/TEST1_BMS1_seed_42_{bm_size}_{num_sensitive}.csv", index=False)
