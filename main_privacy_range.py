@@ -7,10 +7,7 @@ import random
 from band_matrix import compute_band_matrix, logger
 
 
-def chunks(l, n):
-    """Yield successive n-sized chunks from l."""
-    for i in range(0, len(l), n):
-        yield l[i:i + n]
+
 
 
 if __name__ == "__main__":
@@ -51,7 +48,7 @@ if __name__ == "__main__":
     df_square, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=bm_size, num_sensitive=num_sensitive,
                                                             plot=True)
 
-    for privacy_degree in p_degree_list:
+    for privacy_degree in p_degree_list[::-1]:
         # Apply CAHD algorithm to create
         cahd = CAHD(band_matrix=df_square, sensitive_items=sensitive_items, p_degree=privacy_degree, alpha_=alpha)
         print(cahd.group_dict)
@@ -78,7 +75,7 @@ if __name__ == "__main__":
         #         QID_select.append(temp)
         np.random.shuffle(QID)
         # QID_select = [i for i in list(chunks(QID,r)) if len(i) == r][:5]
-        QID_select_list = list(chunks(QID,r))[:n_QID_combinations]
+        QID_select_list = list(cahd.chunks(QID,r))[:n_QID_combinations]
 
 
         # logger("QID select", QID_select)
@@ -120,4 +117,4 @@ if __name__ == "__main__":
 
 
     df_to_plot = pd.DataFrame.from_dict(dict_to_plot)
-    df_to_plot.to_csv(f"./Data_to_plot/TEST1_BMS1_seed_42_{bm_size}_{num_sensitive}.csv", index=False)
+    df_to_plot.to_csv(f"./Data_to_plot/TEST4_BMS1_seed_42_{bm_size}_{num_sensitive}.csv", index=False)

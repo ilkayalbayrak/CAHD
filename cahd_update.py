@@ -245,6 +245,17 @@ class CAHD:
             return True
         return False
 
+    @staticmethod
+    def chunks(l, n):
+        """
+        Yield successive n-sized chunks from a list
+        :param l: list of items
+        :param n: size of the chunks
+        :return:
+        """
+        for i in range(0, len(l), n):
+            yield l[i:i + n]
+
 
 if __name__ == "__main__":
     df = pd.read_csv('./Dataset/BMS1_table.csv', index_col=False)
