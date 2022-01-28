@@ -6,17 +6,11 @@ import KLDivergence
 import random
 from band_matrix import compute_band_matrix, logger
 
-
-
-
-
 if __name__ == "__main__":
     bm_size = 1000  # band matrix size
-    num_sensitive = 10  # number of sensitive items
-    # p_degree = 5  # the degree of privacy
+    num_sensitive = 20  # number of sensitive items
     alpha = 3
     r = 4
-    # [4, 6, 8, 10, 12, 14, 16, 18, 20]
     p_degree_list = [4, 6, 8, 10, 12, 14, 16, 18, 20]
     # p_degree_list = [4,6]
 
@@ -48,7 +42,7 @@ if __name__ == "__main__":
     df_square, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=bm_size, num_sensitive=num_sensitive,
                                                             plot=True)
 
-    for privacy_degree in p_degree_list[::-1]:
+    for privacy_degree in p_degree_list:
         # Apply CAHD algorithm to create
         cahd = CAHD(band_matrix=df_square, sensitive_items=sensitive_items, p_degree=privacy_degree, alpha_=alpha)
         print(cahd.group_dict)
@@ -63,20 +57,10 @@ if __name__ == "__main__":
         CAHD_execution_times.append(int(cahd_ex_time))
         print(f"Privacy-degree: {cahd.p_degree}\nTime required for creating the anonymized groups: {cahd_ex_time}\n")
 
-
         QID = cahd.group_list[0].columns.tolist()
-        # logger("QID list", QID)
-        # QID_select = list()
-        # # np.random.seed(42)
-        # # TODO: choose more QID_SELECT groups and calculate the average KL_divergence for them
-        # while len(QID_select) < r:
-        #     temp = random.choice(QID)
-        #     if temp not in QID_select:
-        #         QID_select.append(temp)
         np.random.shuffle(QID)
         # QID_select = [i for i in list(chunks(QID,r)) if len(i) == r][:5]
-        QID_select_list = list(cahd.chunks(QID,r))[:n_QID_combinations]
-
+        QID_select_list = list(cahd.chunks(QID, r))[:n_QID_combinations]
 
         # logger("QID select", QID_select)
 
@@ -87,16 +71,13 @@ if __name__ == "__main__":
         # change the item dtype to str because the column names(item names) in band matrix are str
         # otherwise they dont match and KL divergence calculation fails
         sensitive_item = str(max(hist_item.keys(), key=(lambda k: hist_item[k])))
-        # logger("Sensitive item, MAX VAL from histogram", sensitive_item)
-        # logger("hist_item",hist_item )
-        # logger("DEBUG", df_square[df_square[sensitive_items] == 1].index.tolist())
-        # logger("DEBUG 2", type(df_square[0].index[0]))
 
         # computation of all combinations for cell C
         all_value = KLDivergence.get_all_combination_of_n(r)
         # logger("KLD all combinations of n for cell C", all_value)
 
         for QID_select in QID_select_list:
+
             # Calculate KL_Divergence value
             KL_Divergence = KLDivergence.compute_KLDivergence_value(df_square, QID_select, cahd.SD_groups,
                                                                     cahd.group_list,
@@ -115,6 +96,5 @@ if __name__ == "__main__":
             dict_to_plot["KLD_exec_time"].append(end_time)
             dict_to_plot["CAHD_exec_time"].append(cahd_ex_time)
 
-
     df_to_plot = pd.DataFrame.from_dict(dict_to_plot)
-    df_to_plot.to_csv(f"./Data_to_plot/TEST4_BMS1_seed_42_{bm_size}_{num_sensitive}.csv", index=False)
+    df_to_plot.to_csv(f"./Data_to_plot/TEST4_BMS1_seed_42_{bm_size}_m{num_sensitive}.csv", index=False)
