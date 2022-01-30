@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 from band_matrix import compute_band_matrix, logger
 
 if __name__ == "__main__":
-    BMS1_m10_privacy_ranged_df = pd.read_csv("./Data_to_plot/BMS1_seed_42_1000_10.csv")
-    BMS1_m20_privacy_ranged_df = pd.read_csv("./Data_to_plot/BMS1_seed_42_1000_20.csv")
+    BMS1_m10_privacy_ranged_df = pd.read_csv("Data_to_plot/Initial_outputs/BMS1_seed_42_1000_10.csv")
+    BMS1_m20_privacy_ranged_df = pd.read_csv("Data_to_plot/Initial_outputs/BMS1_seed_42_1000_20.csv")
 
-    BMS1_p10_sensitive_ranged = pd.read_csv("./Data_to_plot/BMS1_seed_42_1000_p10_m_change.csv")
-    BMS1_p20_sensitive_ranged = pd.read_csv("./Data_to_plot/BMS1_seed_42_1000_p20_m_change.csv")
+    BMS1_p10_sensitive_ranged = pd.read_csv("Data_to_plot/Initial_outputs/BMS1_seed_42_1000_p10_m_change.csv")
+    BMS1_p20_sensitive_ranged = pd.read_csv("Data_to_plot/Initial_outputs/BMS1_seed_42_1000_p20_m_change.csv")
 
     logger("BMS1_m10_privacy_ranged_df", BMS1_m10_privacy_ranged_df)
     logger("BMS1_m20_privacy_ranged_df", BMS1_m20_privacy_ranged_df)
