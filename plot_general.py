@@ -20,22 +20,14 @@ def prepare_avg_values(df, depend_col):
 
 
 if __name__ == "__main__":
-    p_range_m10_df = pd.read_csv("Data_to_plot/Merged_outputs/BMS1_p_range_m10.csv")
+    # p_range_m10_df = pd.read_csv("Data_to_plot/Merged_outputs/BMS1_p_range_m10.csv")
+    p_range_m10_df = pd.read_csv("Data_to_plot/TEST2_BMS1_seed_42_1000_m10.csv")
     p_range_m20_df = pd.read_csv("Data_to_plot/Merged_outputs/BMS1_p_range_m20.csv")
 
     m_range_p10_df = pd.read_csv("Data_to_plot/Merged_outputs/BMS1_m_range_p10.csv")
     m_range_p20_df = pd.read_csv("Data_to_plot/Merged_outputs/BMS1_m_range_p20.csv")
 
     r_range_pm10_df = pd.read_csv("Data_to_plot/Merged_outputs/BMS1_r_range_p10.csv")
-
-    # logger("BMS1_m10_privacy_ranged_df", p_range_m10_df)
-    # logger("BMS1_m20_privacy_ranged_df", p_range_m20_df)
-    #
-    # logger("BMS1_p10_sensitive_ranged", m_range_p10_df)
-    # logger("BMS1_p20_sensitive_ranged", m_range_p20_df)
-
-    # TODO: get the count of items per p_degree or m
-    # calculate the average KLD for each p_degree or m
 
     avg_p_m10 = prepare_avg_values(p_range_m10_df, "p_degree")
     avg_p_m20 = prepare_avg_values(p_range_m20_df, "p_degree")
@@ -51,9 +43,11 @@ if __name__ == "__main__":
     x_range = [4, 6, 8, 10, 12, 14, 16, 18, 20]
 
     # Plot KLD values wrt a range of privacy degrees
-    plt.plot(p_range_m10_df["p_degree"].unique(), avg_p_m10["avg_KLD_value"], marker='o', linestyle='-', color='b', label="m=10")
-    plt.plot(p_range_m20_df["p_degree"].unique(), avg_p_m20["avg_KLD_value"], marker='^', linestyle='-', color='r', label="m=20")
-    # plt.ylim(ymax=0.1)
+    plt.plot(p_range_m10_df["p_degree"].unique(), avg_p_m10["avg_KLD_value"], marker='o', linestyle='-', color='b',
+             label="m=10")
+    plt.plot(p_range_m20_df["p_degree"].unique(), avg_p_m20["avg_KLD_value"], marker='^', linestyle='-', color='r',
+             label="m=20")
+    plt.ylim(ymax=2)
     plt.ylim(ymin=0)
     # plt.xlim(xmin=0)
     plt.xlabel("Privacy degree")
@@ -61,15 +55,17 @@ if __name__ == "__main__":
     plt.xticks(x_range, x_range)
     plt.title("KLD values over a range of p degrees (r = 4) BMS1 m = 10 & m = 20 ")
     plt.legend()
-    plt.savefig('./Plots/BMS1_p_vs_KLD.png')
+    plt.savefig('./Plots/TEST2_BMS1_p_vs_KLD.png')
     plt.show()
 
     # Plot KLD values over a changing quantity of sensitive items
     x_range = [4, 6, 8, 10, 12, 14, 16, 18, 20]
     plt.figure(figsize=(12, 8))
-    plt.plot(m_range_p10_df["num_sensitive"].unique(), avg_m_p10["avg_KLD_value"], marker='o', linestyle='-', color='b', label="p=10")
-    plt.plot(m_range_p20_df["num_sensitive"].unique(), avg_m_p20["avg_KLD_value"], marker='^', linestyle='-', color='r', label="p=20")
-    # plt.ylim(ymax=0.2)
+    plt.plot(m_range_p10_df["num_sensitive"].unique(), avg_m_p10["avg_KLD_value"], marker='o', linestyle='-', color='b',
+             label="p=10")
+    plt.plot(m_range_p20_df["num_sensitive"].unique(), avg_m_p20["avg_KLD_value"], marker='^', linestyle='-', color='r',
+             label="p=20")
+    plt.ylim(ymax=2)
     plt.ylim(ymin=0)
     # plt.xlim(xmin=0)
     plt.xlabel("Number of Sensitive Items")
@@ -80,15 +76,13 @@ if __name__ == "__main__":
     plt.savefig('./Plots/BMS1_m_vs_KLD.png')
     plt.show()
 
-    # TODO: get the avg calculation time for CAHD and KLD calculations
-    # plot the values
-
-    # print(map())
     # Plot CAHD execution times vs privacy degrees
     x_range = [4, 6, 8, 10, 12, 14, 16, 18, 20]
     plt.figure(figsize=(12, 8))
-    plt.plot(p_range_m10_df["p_degree"].unique(), avg_p_m10["CAHD_exec_time"], marker='o', linestyle='-', color='b', label="m=10")
-    plt.plot(p_range_m20_df["p_degree"].unique(), avg_p_m20["CAHD_exec_time"], marker='^', linestyle='-', color='r', label="m=20")
+    plt.plot(p_range_m10_df["p_degree"].unique(), avg_p_m10["CAHD_exec_time"], marker='o', linestyle='-', color='b',
+             label="m=10")
+    plt.plot(p_range_m20_df["p_degree"].unique(), avg_p_m20["CAHD_exec_time"], marker='^', linestyle='-', color='r',
+             label="m=20")
     # plt.ylim(ymax=0.2)
     plt.ylim(ymin=0)
     # plt.xlim(xmin=0)
@@ -103,8 +97,10 @@ if __name__ == "__main__":
     # Plot CAHD execution times vs privacy degrees
     x_range = [4, 6, 8, 10, 12, 14, 16, 18, 20]
     plt.figure(figsize=(12, 8))
-    plt.plot(m_range_p10_df["num_sensitive"].unique(), avg_m_p10["CAHD_exec_time"], marker='o', linestyle='-', color='b', label="m=10")
-    plt.plot(m_range_p20_df["num_sensitive"].unique(), avg_m_p20["CAHD_exec_time"], marker='^', linestyle='-', color='r', label="m=20")
+    plt.plot(m_range_p10_df["num_sensitive"].unique(), avg_m_p10["CAHD_exec_time"], marker='o', linestyle='-',
+             color='b', label="m=10")
+    plt.plot(m_range_p20_df["num_sensitive"].unique(), avg_m_p20["CAHD_exec_time"], marker='^', linestyle='-',
+             color='r', label="m=20")
     # plt.ylim(ymax=0.2)
     plt.ylim(ymin=0)
     # plt.xlim(xmin=0)
