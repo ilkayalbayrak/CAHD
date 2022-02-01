@@ -22,12 +22,15 @@ def prepare_avg_values(df, depend_col):
 if __name__ == "__main__":
     # p_range_m10_df = pd.read_csv("Data_to_plot/Merged_outputs/BMS1_p_range_m10.csv")
     p_range_m10_df = pd.read_csv("Data_to_plot/TEST2_BMS1_seed_42_1000_m10.csv")
-    p_range_m20_df = pd.read_csv("Data_to_plot/Merged_outputs/BMS1_p_range_m20.csv")
+    p_range_m20_df = pd.read_csv("Data_to_plot/TEST1_BMS1_seed_42_1000_m20.csv")
 
-    m_range_p10_df = pd.read_csv("Data_to_plot/Merged_outputs/BMS1_m_range_p10.csv")
-    m_range_p20_df = pd.read_csv("Data_to_plot/Merged_outputs/BMS1_m_range_p20.csv")
+    m_range_p10_df = pd.read_csv("Data_to_plot/S_TEST1_BMS1_seed_42_1000_p10_m_change.csv")
+    m_range_p20_df = pd.read_csv("Data_to_plot/S_TEST1_BMS1_seed_42_1000_p20_m_change.csv")
 
     r_range_pm10_df = pd.read_csv("Data_to_plot/Merged_outputs/BMS1_r_range_p10.csv")
+
+    # p_range_m10_df = p_range_m10_df.replace(0, np.NaN)
+    # p_range_m20_df = p_range_m20_df.replace(0, np.NaN)
 
     avg_p_m10 = prepare_avg_values(p_range_m10_df, "p_degree")
     avg_p_m20 = prepare_avg_values(p_range_m20_df, "p_degree")

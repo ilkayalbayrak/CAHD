@@ -8,7 +8,7 @@ from band_matrix import compute_band_matrix, logger
 
 if __name__ == "__main__":
     bm_size = 1000  # band matrix size
-    num_sensitive = 10  # number of sensitive items
+    num_sensitive = 20  # number of sensitive items
     alpha = 3
     r = 4
     p_degree_list = [4, 6, 8, 10, 12, 14, 16, 18, 20]
@@ -97,4 +97,4 @@ if __name__ == "__main__":
             dict_to_plot["CAHD_exec_time"].append(cahd_ex_time)
 
     df_to_plot = pd.DataFrame.from_dict(dict_to_plot)
-    df_to_plot.to_csv(f"./Data_to_plot/TEST2_BMS1_seed_42_{bm_size}_m{num_sensitive}.csv", index=False)
+    df_to_plot.to_csv(f"./Data_to_plot/TEST1_BMS1_seed_42_{bm_size}_m{num_sensitive}.csv", index=False)

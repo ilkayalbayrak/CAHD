@@ -11,8 +11,8 @@ if __name__ == "__main__":
     num_sensitive_list = [4, 6, 8, 10, 12, 14, 16, 18, 20]  # number of sensitive items
     alpha = 3
     r = 4
-    p_degree = 20
-    n_QID_combinations = 5
+    p_degree = 10
+    n_QID_combinations = 20
 
     CAHD_execution_times = list()
     KLD_execution_times = list()
@@ -91,4 +91,4 @@ if __name__ == "__main__":
             dict_to_plot["CAHD_exec_time"].append(cahd_ex_time)
 
     df_to_plot = pd.DataFrame.from_dict(dict_to_plot)
-    df_to_plot.to_csv(f"./Data_to_plot/S_TEST4_BMS1_seed_42_{bm_size}_p{p_degree}_m_change.csv", index=False)
+    df_to_plot.to_csv(f"./Data_to_plot/S_TEST1_BMS1_seed_42_{bm_size}_p{p_degree}_m_change.csv", index=False)

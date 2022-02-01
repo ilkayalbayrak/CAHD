@@ -265,3 +265,5 @@ if __name__ == "__main__":
     cahd = CAHD(band_matrix=df_square, sensitive_items=sensitive_items, p_degree=4, alpha_=4)
     cahd.create_groups()
     print(cahd.group_dict)
+    hist = cahd.compute_hist()
+    print(hist)
