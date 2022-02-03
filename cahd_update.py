@@ -205,30 +205,6 @@ class CAHD:
                         list(self.band_matrix.index[group]))
 
                     remaining = len(self.band_matrix.index)
-                    # logger("REMAINING",remaining)
-                ############################################################################
-                # check formation of group or the creation of the last group
-                # th_max = max(temp_hist.values())
-                # # logger("TH_MAX of histogram", th_max)
-                # # logger("temp_hist", temp_hist)
-                # if th_max * self.p_degree > remaining - len(group):
-                #     st_index += 1
-                #
-                # else:
-                #     self.hist = temp_hist.copy()
-                #     label_group = self.band_matrix.iloc[group].index
-                #     id_sensitive_transaction = [i for i in id_sensitive_transaction if i not in label_group]
-                #
-                #     group_dict.append(self.band_matrix.index[group])
-                #     group_list.append(
-                #         self.band_matrix.loc[list(self.band_matrix.index[group]), self.QID_items])
-                #
-                #     sd_groups.append(selected_sensitive_items)
-                #
-                #     self.band_matrix = self.band_matrix.drop(
-                #         list(self.band_matrix.index[group]))
-                #
-                #     remaining = len(self.band_matrix.index)
             else:
                 st_index += 1
         # create the last group and update data structures

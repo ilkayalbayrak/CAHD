@@ -2,23 +2,17 @@ import pandas as pd
 from cahd_update import CAHD
 import time
 import numpy as np
-import KLDivergence
+from KLDivergence import KLDivergence
 import random
 from band_matrix import compute_band_matrix, logger
 
 if __name__ == "__main__":
     bm_size = 1000  # band matrix size
-    num_sensitive = 20  # number of sensitive items
+    num_sensitive = 10  # number of sensitive items
     alpha = 3
     r = 4
     p_degree_list = [4, 6, 8, 10, 12, 14, 16, 18, 20]
-    # p_degree_list = [4,6]
-
-    CAHD_execution_times = list()
-    KLD_execution_times = list()
-    KL_values = list()
-
-    n_QID_combinations = 20
+    n_QID_combinations = 5
 
     # load the data
     data_path = './Dataset/BMS1_table.csv'
@@ -39,12 +33,12 @@ if __name__ == "__main__":
     start_time = time.time()
 
     print("Calculating band matrix")
-    df_square, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=bm_size, num_sensitive=num_sensitive,
-                                                            plot=True)
+    band_matrix, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=bm_size, num_sensitive=num_sensitive,
+                                                              plot=True)
 
     for privacy_degree in p_degree_list:
         # Apply CAHD algorithm to create
-        cahd = CAHD(band_matrix=df_square, sensitive_items=sensitive_items, p_degree=privacy_degree, alpha_=alpha)
+        cahd = CAHD(band_matrix=band_matrix, sensitive_items=sensitive_items, p_degree=privacy_degree, alpha_=alpha)
         print(cahd.group_dict)
         cahd.compute_hist()
         hist_item = cahd.hist
@@ -54,7 +48,6 @@ if __name__ == "__main__":
         cahd_ex_time = time.time() - start_time
 
         # append CAHD execution time for current parameters
-        CAHD_execution_times.append(int(cahd_ex_time))
         print(f"Privacy-degree: {cahd.p_degree}\nTime required for creating the anonymized groups: {cahd_ex_time}\n")
 
         QID = cahd.group_list[0].columns.tolist()
@@ -73,28 +66,26 @@ if __name__ == "__main__":
         sensitive_item = str(max(hist_item.keys(), key=(lambda k: hist_item[k])))
 
         # computation of all combinations for cell C
-        all_value = KLDivergence.get_all_combination_of_n(r)
+        all_value = KLDivergence.get_all_combinations_of_QID_subset(r)
         # logger("KLD all combinations of n for cell C", all_value)
 
         for QID_select in QID_select_list:
-
             # Calculate KL_Divergence value
-            KL_Divergence = KLDivergence.compute_KLDivergence_value(df_square, QID_select, cahd.SD_groups,
-                                                                    cahd.group_list,
-                                                                    sensitive_items, all_value)
+            KL_Divergence = KLDivergence(band_matrix, QID_select, cahd.SD_groups,
+                                         cahd.group_list,
+                                         sensitive_items, all_value)
+            KLD_value = KL_Divergence.compute_KLDivergence_value()
 
-            print(f"\n{'-' * 20}\nKL_Divergence Total: {KL_Divergence}, Privacy degree: {privacy_degree},"
+            print(f"\n{'-' * 20}\nKL_Divergence Total: {KLD_value}, Privacy degree: {privacy_degree},"
                   f"Sensitive Item: {sensitive_item}\nQID_select: {QID_select}\n{'-' * 20}\n")
 
             # append KLD values and respective calculation times
             end_time = time.time() - start_time
-            KLD_execution_times.append(int(end_time))
-            KL_values.append(KL_Divergence)
 
             dict_to_plot["p_degree"].append(privacy_degree)
-            dict_to_plot["KLD_value"].append(KL_Divergence)
+            dict_to_plot["KLD_value"].append(KLD_value)
             dict_to_plot["KLD_exec_time"].append(end_time)
             dict_to_plot["CAHD_exec_time"].append(cahd_ex_time)
 
     df_to_plot = pd.DataFrame.from_dict(dict_to_plot)
-    df_to_plot.to_csv(f"./Data_to_plot/TEST1_BMS1_seed_42_{bm_size}_m{num_sensitive}.csv", index=False)
+    df_to_plot.to_csv(f"./Data_to_plot/asd_cahd-bm-forKLD-test_{bm_size}_m{num_sensitive}.csv", index=False)
