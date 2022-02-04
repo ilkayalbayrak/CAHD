@@ -1,5 +1,4 @@
 import itertools
-from band_matrix import logger
 import numpy as np
 
 
@@ -33,10 +32,8 @@ class KLDivergence:
 
     def calculate_act(self, cell, SD_item):
         """
-        Function for computing the probability distribution given the sensitive item s
+        Function for computing the actual probability distribution given the sensitive item s
         for a specific cell C
-        :param band_matrix:
-        :param QID_select:
         :param cell: A single one of int(n) cell combinations, n=4 -> [0000], [1000], [0100], ...
         :param SD_item: Sensitive item label (column name), or it could be a list of SD items
         :return:
@@ -78,17 +75,16 @@ class KLDivergence:
 
     def calculate_est(self, cell, SD_item):
         """
+        Function for computing the actual probability distribution given the sensitive item s
+        for a specific cell C
+
         a * b / |G|
          where "a" is the number of sensitive items in group G
          b the number of transitions that match the QIDs in the group
          |G| is the cardinality of the group
          and calculate with all the groups that intersect cell C
-        :param band_matrix:
-        :param SD_groups:
-        :param groups_list:
-        :param QID_select:
-        :param cell:
-        :param SD_item:
+        :param cell: A single one of int(n) cell combinations, n=4 -> [0000], [1000], [0100], ...
+        :param SD_item: Sensitive item label (column name), or it could be a list of SD items
         :return:
         """
         value_tot = 0

@@ -7,6 +7,7 @@ import pandas as pd
 
 
 class CAHD:
+
     original_dataframe = None
     id_sensitive_transaction = None  # list of sensitive transactions id
     band_matrix = None  # banded matrix, output of RCM
@@ -86,10 +87,11 @@ class CAHD:
 
     def select_best_transactions(self, candidate_list, transaction_target):
         """
-
-        :param candidate_list:
-        :param transaction_target:
-        :return:
+        Function for picking a group (p-1) of transactions that have the closest QID to our
+        target transaction
+        :param candidate_list: 2*alpha*p candidate transaction list
+        :param transaction_target: The SD transaction we are trying to anonymize
+        :return: p-1 closest transactions to target transactions
         """
         distance = list()
         list_1 = self.band_matrix.iloc[transaction_target][self.QID_items]
@@ -108,9 +110,9 @@ class CAHD:
     # calculate the list of candidate groups
     def compute_candidate_list(self, idx_sensitive_transaction):
         """
-
-        :param idx_sensitive_transaction:
-        :return:
+        # this function returns the non-conflicting candidate rows(transactions), (alpha * p)  preceding and following
+        :param idx_sensitive_transaction: The location of the sensitive transaction
+        :return: 2*alpha*p number of candidate transactions
         """
         alpha_p = self.alpha_ * self.p_degree
         candidate_list = list()
@@ -138,6 +140,11 @@ class CAHD:
 
         :return:
         """
+
+        group_dict = list()
+        group_list = list()
+        sd_groups = list()
+
         p_degree_satisfied = False
         temp_privacy = self.p_degree
 
@@ -150,30 +157,32 @@ class CAHD:
             if not p_degree_satisfied:
                 temp_privacy -= 1
 
-        # candidate_list = dict()
+        # get the indexes of the transactions that have sensitive items
         self.id_sensitive_transaction = self.band_matrix.iloc[
             list(set(list(np.where(self.band_matrix[self.sensitive_items] == 1)[0])))].index
-        group_dict = list()
-        group_list = list()
-        sd_groups = list()
+
 
         id_sensitive_transaction = np.random.permutation(self.id_sensitive_transaction)
-        # logger("Indexes of sensitive transactions", id_sensitive_transaction)
         remaining = len(self.band_matrix)
 
-        st_index = 0  # sensitive transaction index
+        # sensitive transaction index
+        st_index = 0
         while st_index < len(id_sensitive_transaction):
-            # logger("Sensitive transaction index", st_index)
+
             # select sensitive transaction
             q = id_sensitive_transaction[st_index]
-            # logger("Selected sensitive transaction/id_sensitive_transaction[st_index] Q",q)
+
+            # Get the location of the SD transaction on the band-matrix
             t = self.band_matrix.index.get_loc(q)
+
+            # Prepare a candidate list for the SD transaction
             candidate_list, error = self.compute_candidate_list(t)
 
             if not error:
+                # pick the transactions that have the closest QID to our target transaction
                 group = self.select_best_transactions(candidate_list, t)
 
-                # append target transaction
+                # append target (SD) transaction to the group
                 group.append(t)
 
                 # update histogram
@@ -182,15 +191,18 @@ class CAHD:
                 for idx in selected_sensitive_items.index:
                     temp_hist[idx] -= selected_sensitive_items.loc[idx]
 
-                privacy_satisfied = False
-                for idx in temp_hist.keys():
-                    if temp_hist[idx] * self.p_degree > remaining:
-                        print(f"################################################\nPRIVACY SATISFIED temp_hist[idx]:{temp_hist[idx]}\n")
-                        privacy_satisfied = True
+                condition = False
+                # Go through all the SD items
+                for k in temp_hist.keys():
+                    # for each SD, verify that the creation of the group will meet the anonymity standards
+                    # if there are not enough rows(transactions) left, then the group will not be valid
+                    if temp_hist[k] * self.p_degree > remaining:
+                        # print(f"################################################\nPRIVACY SATISFIED temp_hist[k]:{temp_hist[k]}\n")
+                        condition = True
                         st_index += 1
                         break
 
-                if not privacy_satisfied:
+                if not condition:
                     self.hist = temp_hist.copy()
                     label_group = self.band_matrix.iloc[group].index
                     id_sensitive_transaction = [i for i in id_sensitive_transaction if i not in label_group]
@@ -218,8 +230,6 @@ class CAHD:
         self.SD_groups = sd_groups
         self.group_list = group_list
         self.group_dict = group_dict
-            # return True
-        # return False
 
     @staticmethod
     def chunks(l, n):
@@ -235,11 +245,12 @@ class CAHD:
 
 if __name__ == "__main__":
     df = pd.read_csv('./Dataset/BMS1_table.csv', index_col=False)
-    df_square, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=487, num_sensitive=10, plot=True)
+    df_square, items, sensitive_items = compute_band_matrix(dataset=df, bm_size=1000, num_sensitive=10, plot=True)
     print(df_square.shape)
 
     cahd = CAHD(band_matrix=df_square, sensitive_items=sensitive_items, p_degree=4, alpha_=4)
     cahd.create_groups()
     print(cahd.group_dict)
-    hist = cahd.compute_hist()
-    print(hist)
+    hist = cahd.hist
+    print(f"hist of sd items: {hist}")
+    print(cahd.group_dict)
