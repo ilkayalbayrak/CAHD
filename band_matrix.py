@@ -40,8 +40,9 @@ def plot_band_matrix(square_matrix, square_band_matrix, bandwidth_1, bandwidth_2
 
 def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False):
     """
+    Function for creating the band matrix that will be used for sensitive transaction anonymization process
 
-    :param dataset: Original dataset
+    :param dataset: Original dataset (sparse binary matrix)
     :param bm_size: Edge length of the square matrix (soon to be band-matrix)
     :param num_sensitive: Number of sensitive items
         Since there is no way to know which items are sensitive, we tag a chosen number of them as sensitive
@@ -106,20 +107,15 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
             dataset.columns = [str(i) for i in range(len(dataset.columns))]
 
         items_reordered = [items[i] for i in random_column]
-        # logger('Items reordered', items_reordered[:10])
 
         # cut selected size of square piece from the dataset
         df_square = dataset.iloc[random_row, random_column]
-        # logger('df_square', df_square.head())
 
         # spy method is for plotting sparsity pattern of 2D arrays
-        # plt.spy(df_square, marker='.', markersize='1')
-
-        # TODO: Select sensitive items (columns) before populating the matrix with zeros
+        # TODO: Select sensitive items (columns) before populating the matrix with zeros?
         # select sensitive items
         sensitive_items = df_square.columns[-num_sensitive:]
         # sensitive_items = np.random.choice(df_square.columns, num_sensitive)
-        # logger('Sensitive items', sensitive_items)
 
         # Convert df to sparse matrix format
         sparse = csr_matrix(df_square)
@@ -129,25 +125,17 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
         # therefore no need to try to create a symmetric matric beforehand
         # TODO: try out preparing a symmetric input matrix to see if anything changes
         order = reverse_cuthill_mckee(sparse)
-        # logger('RCM', order)
-        # plt.spy(order, marker='.', markersize='1')
 
 
         columns_final_order = [df_square.columns[i] for i in order]
-        # logger('Columns final order', columns_final_order)
 
         # items_final_order = [items_reordered[i] for i in order]
         items_final_order = [items_reordered[i] for i in order]
 
-        # logger('Items final order', items_final_order)
-        # logger('Items final order LENGTH', len(items_final_order))
-        # items_final_test = dict(zip(columns_final_order, items_final_order))
-        # logger("######################3 TEST ###############3", list(items_final_test))
-
         # Band matrix
         df_square_band = df_square.iloc[order][columns_final_order]
 
-        # Band of the inital dataframe
+        # Band of the initial dataframe
         [i, j] = np.where(df_square == 1)
         bw1 = max(i - j) + 1
 
@@ -159,8 +147,6 @@ def compute_band_matrix(dataset=None, bm_size=1000, num_sensitive=1, plot=False)
             plot_band_matrix(df_square, df_square_band, bw1, bw2)
 
         return df_square_band, items_final_order, sensitive_items
-    # elif dataset is not None and len(dataset) >= bm_size:
-    #     pass
 
 
 if __name__ == '__main__':

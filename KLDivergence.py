@@ -8,7 +8,7 @@ class KLDivergence:
 
         :param band_matrix: The square matrix we get from RCM calculation
         :param QID_select: r number of selected QID items a.k.a QID_subset
-        :param SD_groups: Groups that have sensitive item
+        :param SD_groups: SD item in the group
         :param group_list: All Formed groups
         :param SD_items: All sensitive items
         :param Cells: all possible int(n) cell combinations, n=4 -> [0000], [1000], [0100], ...
@@ -19,11 +19,13 @@ class KLDivergence:
         self.group_list = group_list
         self.SD_items = SD_items
         self.Cells = Cells
+        print(f"SD_groups: {self.SD_groups}")
 
     @staticmethod
     def get_all_combinations_of_QID_subset(n):
         """
         compute all possible combination of n in CELL, n=4 -> [0000], [1000], ...
+
         :param n: number of items in QID subset
         :return lst: all possible combinations of n value
         """
@@ -83,6 +85,7 @@ class KLDivergence:
          b the number of transitions that match the QIDs in the group
          |G| is the cardinality of the group
          and calculate with all the groups that intersect cell C
+
         :param cell: A single one of int(n) cell combinations, n=4 -> [0000], [1000], [0100], ...
         :param SD_item: Sensitive item label (column name), or it could be a list of SD items
         :return:

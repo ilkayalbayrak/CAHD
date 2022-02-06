@@ -1,5 +1,8 @@
-#ignore the data for now
-Dataset
-KLD_values
-#band_matrix.py
+#ignore the data for no
+.ipynb_checkpoints
+Dataset/.ipynb_checkpoints
+Dataset/BMS2_item_names.txt
+Dataset/BMS2_table.csv
+Dataset/BMS2.txt
 scratch.py
+Untitled.ipynb

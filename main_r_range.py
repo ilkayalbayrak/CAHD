@@ -1,5 +1,5 @@
 import pandas as pd
-from cahd_update import CAHD
+from CAHD import CAHD
 import time
 import numpy as np
 from KLDivergence import KLDivergence
